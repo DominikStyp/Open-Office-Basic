@@ -44,6 +44,31 @@ sub goToCell(addr as String)
 	fnDispatch("GoToCell", array("ToPoint",addr)) ' addr like "$J$1"
 end sub
 
+
+' Sort by specified column "J"
+sub Sort
+	SortBySpecifiedColumn("J")
+end sub
+
+sub SortBySpecifiedColumn(column as String)
+	Dim currentAddr
+	currentAddr = getCurrentCellAbsoluteAddress()
+	' go to beginning of column
+	goToCell("$" + column + "$1")
+	' Selecting column
+    fnDispatch("SelectColumn")
+    ' Sort column in descending order
+	fnDispatch("SortDescending")
+	' Automatic confirm for Extend Selection, HIT ENTER = 13 (carriage return)
+	fnDispatch("InsertText", array("Text","e"))	
+	'fnDispatch("EnterString",array("StringName","e"))
+	' return to previous cell
+	goToCell(currentAddr)
+
+end sub
+
+
+
 ' easily invoking UNO dispatcher
 function fnDispatch(sCommand as string, optional mArgs)
        oFrame = ThisComponent.getCurrentController.getFrame
@@ -69,3 +94,54 @@ Sub proFirst()
         Range("A3").Formula = "=A1+A2"
         Range("A1").Select
 End Sub
+
+
+
+' Reverse string
+Function reverse(r As String) As String
+    Dim t As String
+    Dim c As String
+    Dim i, l As Integer
+   
+    t = r
+    l = Len(t)
+    i = 1
+   
+    Do While i < l
+        c = Mid(t, i, 1)
+        Mid(t, i, 1) = Mid(t, l, 1)
+        Mid(t, l, 1) = c
+        i = i + 1
+        l = l - 1
+    Loop
+    reverse = t
+End Function
+
+
+' Delete last line in every cell. USES: reverse()
+sub deletelastline
+   Dim oDoc As Object
+   Dim oSelection As Object
+   Dim s As String
+   dim i As Long, j As Long
+   Dim  c10 As Long
+   
+   oDoc = ThisComponent
+   oSelection = oDoc.CurrentSelection
+   if oSelection.supportsService("com.sun.star.sheet.SheetCellRange") then
+      for i = 0 to oSelection.rows.count - 1
+         for j = 0 to oSelection.columns.count - 1
+            s = oSelection.getCellByPosition(j,i).String
+            if Len(s) > 0 then
+               s = reverse(s)
+               c10 = InStr(s,Chr(10))
+               if c10 > 0 then
+                  s = Right(s,Len(s) - c10)
+                  oSelection.getCellByPosition(j,i).setString(reverse(s))
+               endif
+            endif
+         next j
+      next i
+   endif
+               
+end sub
