@@ -6,6 +6,9 @@
 MsgBox ThisComponent.Sheets.getByName("Sheet1").getCellRangeByName("F13:F19").getCellByPosition( 0, 0 ).Value
 
 
+' ALL UNO COMMANDS FOR fnDispatch() are here:
+' https://wiki.openoffice.org/wiki/Framework/Article/OpenOffice.org_2.x_Commands
+
 ' Select current column (where cursor currently is
 '    fnDispatch("SelectColumn")
 
