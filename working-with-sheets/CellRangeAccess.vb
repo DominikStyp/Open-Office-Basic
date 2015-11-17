@@ -6,6 +6,13 @@
 MsgBox ThisComponent.Sheets.getByName("Sheet1").getCellRangeByName("F13:F19").getCellByPosition( 0, 0 ).Value
 
 
+' Select current column (where cursor currently is
+'    fnDispatch("SelectColumn")
+
+' Insert String (where cursor currently is
+'    fnDispatch("InsertText", array("Text","e"))
+'    fnDispatch("EnterString",array("StringName","e"))
+
 
 Sub proTest()
         Sheets("Sheet1").Select
@@ -19,8 +26,9 @@ Sub proTest()
 
 End Sub
 
-
-sub getCurrentCellColumnAndRowNum as String
+' Return array with indexes 0 = row, 1  = column
+' To get column number use:  MsgBox(getCurrentCellColumnAndRowNum()(1))
+sub getCurrentCellColumnAndRowNum as Array
       Dim oCell,oDoc,column,row,addr
 	  oDoc = ThisComponent
 	  oCell = oDoc.getCurrentSelection
@@ -28,8 +36,10 @@ sub getCurrentCellColumnAndRowNum as String
 	  column = oCell.CellAddress.Column
 	  ' number of row indexed from 0
 	  row = oCell.CellAddress.Row
+	  getCurrentCellColumnAndRowNum = Array(row,column)
 end sub
 
+' Gets current cell address like $F$10
 sub getCurrentCellAbsoluteAddress as String
       Dim oCell,oDoc,arr,addr
 	  oDoc = ThisComponent
@@ -40,6 +50,7 @@ sub getCurrentCellAbsoluteAddress as String
 	  getCurrentCellAbsoluteAddress = addr
 end sub
 
+' Goes to cell with specified address
 sub goToCell(addr as String)
 	fnDispatch("GoToCell", array("ToPoint",addr)) ' addr like "$J$1"
 end sub
@@ -50,21 +61,17 @@ sub Sort
 	SortBySpecifiedColumn("J")
 end sub
 
+' Automatically sorts by specified column
 sub SortBySpecifiedColumn(column as String)
 	Dim currentAddr
+	' get current cell
 	currentAddr = getCurrentCellAbsoluteAddress()
-	' go to beginning of column
+	' go to beginning of column like $J$1
 	goToCell("$" + column + "$1")
-	' Selecting column
-    fnDispatch("SelectColumn")
     ' Sort column in descending order
 	fnDispatch("SortDescending")
-	' Automatic confirm for Extend Selection, HIT ENTER = 13 (carriage return)
-	fnDispatch("InsertText", array("Text","e"))	
-	'fnDispatch("EnterString",array("StringName","e"))
-	' return to previous cell
+     ' return to previous cell
 	goToCell(currentAddr)
-
 end sub
 
 
