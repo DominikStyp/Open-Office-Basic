@@ -37,7 +37,7 @@ sub getCurrentCellAbsoluteAddress as String
 	  'oCell.AbsoluteName gives full address like: $sheet1.$F$10
 	  arr = Split(oCell.AbsoluteName,".")
 	  addr = arr(1) ' here we have only $F$10 which we can put into goToCell function
-	  getCurrentCellAddress = addr
+	  getCurrentCellAbsoluteAddress = addr
 end sub
 
 sub goToCell(addr as String)
